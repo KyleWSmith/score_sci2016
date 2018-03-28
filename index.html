@@ -1,84 +1,201 @@
 <!DOCTYPE html>
-<html>
-<title>SCI Imagery Viewer</title>
-<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
-   integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
-   crossorigin=""/>
-    
-    <style>
-            #header {
-                height: 75px;
-                background-color: dimgrey;
-                color: whitesmoke;
-        }
-        #map {
-                height: 450px;
-                background-color: black;
-            }
+        <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+            <title>San Clemente Island 2016</title>
 
-        @import 'https://fonts.googleapis.com/css?family=Kaushan+Script';
+   <!-- css -->
+              <link rel="stylesheet" href="css/leaflet.css" />
+              <link rel="stylesheet" href="css/bootstrap.css"/>
+              <link rel="stylesheet" href="css/leaflet.fullscreen.css"/>
+              
+              
+              <link rel="stylesheet" href="css/bootstrap-grid.css"/>
+              <link rel="stylesheet" href="css/leaflet.mouseCoordinate.css" />
+              <link rel="stylesheet" href="css/leaflet.toolbar.css" />
+              <link rel="stylesheet" href="css/Control.OSMGeocoder.css"/>
+              <link rel="stylesheet" href="css/leaflet.draw-toolbar.css"/>
+              <link rel=stylesheet href="css/leaflet.draw.css"/>
+              
+              <!-- src -->
+              <script src="lib/leaflet.js"></script>
+              <script src="js/bootstrap.js"></script>
+              <script src="js/popper.js"></script>
+               <script src="src/Leaflet.fullscreen.js"></script>
 
-.gradient-text {
-  position: relative;
-  text-shadow: .15em .15em .35em #888;
-  padding: .5em;
-  &::after {
-    content:'';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: radial-gradient(circle at 70% 3%, #aa048b, #bb9801);
-    mix-blend-mode: screen;
-  }
-}
+<!--              <script src="src/leaflet.toolbar.js"></script>-->
+              <script src="src/leaflet.mousecoordinate.js"></script>
+              <script src="src/utm.js"></script>
+              <script src="src/utmref.js"></script>
+              <script src="src/Control.OSMGeocoder.js"></script>
+<!--
+              <script src="src/leaflet.toolbar.js"></script>
+              <script src="src/leaflet.toolbar-src.js"></script>
+             // <script src="src/leaflet.draw-src.js"></script>
+             // <script src="src/leaflet.draw-toolbar.js"></script>
+-->
+              
 
-// boring
-body {
-  font-size: 4vmax;
-  text-align: center;
-  background: #fff;
-  color: #000;
-}
-blockquote {
-  margin: 0;
-}
-h1 {
-  font-family: 'Kaushan Script', sans-serif;
-  letter-spacing: .1ch;
-  margin: 0;
-  line-height: 1.3;
-}
-p {
-  font-family: sans-serif;
-  font-size: 1ch;
-  opacity: .35;
-}
+    <script src="src/Toolbar.js"></script>
+    <script src="src/Tooltip.js"></script>
+
+    <script src="src/ext/GeometryUtil.js"></script>
+    <script src="src/ext/LatLngUtil.js"></script>
+    <script src="src/ext/LineUtil.Intersect.js"></script>
+    <script src="src/ext/Polygon.Intersect.js"></script>
+    <script src="src/ext/Polyline.Intersect.js"></script>
+    <script src="src/ext/TouchEvents.js"></script>
+
+    <script src="src/draw/DrawToolbar.js"></script>
+    <script src="src/draw/handler/Draw.Feature.js"></script>
+    <script src="src/draw/handler/Draw.SimpleShape.js"></script>
+    <script src="src/draw/handler/Draw.Polyline.js"></script>
+    <script src="src/draw/handler/Draw.Marker.js"></script>
+    <script src="src/draw/handler/Draw.Circle.js"></script>
+    <script src="src/draw/handler/Draw.CircleMarker.js"></script>
+    <script src="src/draw/handler/Draw.Polygon.js"></script>
+    <script src="src/draw/handler/Draw.Rectangle.js"></script>
+
+
+    <script src="src/edit/EditToolbar.js"></script>
+    <script src="src/edit/handler/EditToolbar.Edit.js"></script>
+    <script src="src/edit/handler/EditToolbar.Delete.js"></script>
+
+    <script src="src/Control.Draw.js"></script>
+
+    <script src="src/edit/handler/Edit.Poly.js"></script>
+    <script src="src/edit/handler/Edit.SimpleShape.js"></script>
+    <script src="src/edit/handler/Edit.Rectangle.js"></script>
+    <script src="src/edit/handler/Edit.Marker.js"></script>
+    <script src="src/edit/handler/Edit.CircleMarker.js"></script>
+    <script src="src/edit/handler/Edit.Circle.js"></script>
+           
+              <style>
+                body { margin:0; padding:0; }
+                body, table, tr, td, th, div, h1, h2, input { font-family: "Calibri", "Trebuchet MS", "Ubuntu", Serif; font-size: 11pt; }
+                #map { position:absolute; top:0; bottom:0; width:100%; } /* full size */
+                .ctl {
+                    padding: 2px 10px 2px 10px;
+                    background: white;
+                    background: rgba(255,255,255,0.9);
+                    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                    border-radius: 5px;
+                    text-align: right;
+                }
+                .title {
+                    font-size: 18pt;
+                    font-weight: bold;
+                }
+                .src {
+                    font-size: 10pt;
+                }
+
+            </style>
+
+        </head>
+        <body>
+            Latitude: <input type="text" name="lat" id="lat"/>
+            <br/>
+            Longitude: <input type="text" name="lng" id="lng"/>
+            <input type="button" onclick="zoomTo()" value="zoomTo"/>
+        <div id="map"></div>
+
+        <script>
+        //mouse coordinates
+        
+         
+        /* **** Leaflet **** */
+
+        // Base layers
+        //  .. OpenStreetMap
+        var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: ''});
+            
+        //ESRI World Imagery
+         var ESRI =
+        L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri'});
+
+        //  .. CartoDB Positron
+        var cartodb = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {attribution: ''});
+
+        //  .. OSM Toner
+        var toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'});
+
+        //  .. White background
+        var white = L.tileLayer("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAAA1BMVEX///+nxBvIAAAAH0lEQVQYGe3BAQ0AAADCIPunfg43YAAAAAAAAAAA5wIhAAAB9aK9BAAAAABJRU5ErkJggg==");
+
+        // Overlay layers (TMS)
+        var lyr = L.tileLayer('./data/{z}/{x}/{y}.png', {tms: true, opacity: 1, attribution: ""});
+
+        // Map
+        var map = L.map('map', {
+            center: [32.9205234934, -118.480384298],
+            zoom: 16,
+            minZoom: 8,
+            maxZoom: 19,
+            layers: [ESRI,lyr]
+        });
+
+        var basemaps = {"OpenStreetMap": osm, "ESRI World Imagery":ESRI}
+        var overlaymaps = {"SCI Imagery 2016": lyr}
+
+        // Title
+       /* var title = L.control();
+        title.onAdd = function(map) {
+            this._div = L.DomUtil.create('div', 'ctl title');
+            this.update();
+            return this._div;
+        };
+        title.update = function(props) {
+            this._div.innerHTML = "San Clemente Island 2016";
+        };
+        title.addTo(map);*/
+
+        // Note
+   /*     var src = 'Created by SCORE Data Products';
+        var title = L.control({position: 'bottomleft'});
+        title.onAdd = function(map) {
+            this._div = L.DomUtil.create('div', 'ctl src');
+            this.update();
+            return this._div;
+        };
+        title.update = function(props) {
+            this._div.innerHTML = src;
+        };
+        title.addTo(map);*/
+
+
+        // Add base layers
+        L.control.layers(basemaps, overlaymaps).addTo(map);
+
+        // Fit to overlay bounds (SW and NE points with (lat, lon))
+        map.fitBounds([[32.7896837234, -118.338007279], [33.0513632634, -118.622761317]]);
+
+        //Mouse coordinates
+        L.control.mouseCoordinate({gpsLong: true, utm:false,utmref:true,gps: true}).addTo(map);
+            
+        function zoomTo() {
+        var lat = document.getElementById("lat").value;
+        var lng = document.getElementById("lng").value;
+        map.panTo(new L.LatLng(lat, lng));
+    }   
+            //https://github.com/k4r573n/leaflet-control-osm-geocoder
+            var osmGeocoder = new L.Control.OSMGeocoder({placeholder: 'Ex: 32.30 -118.30', position:'bottomright', text:'Search', collapsed:false});
+
+		      map.addControl(osmGeocoder);
+            
+            //Leaflet Draw and Control Toolbar:
+            
+  
+  
+            
+            //fullscreen control
+            //https://github.com/Leaflet/Leaflet.fullscreen -still need to implement
+        map.addControl(new L.Control.Fullscreen());
+        </script>
+
+        </body>
+        </html>
 
         
-
-		</style>
-</head>
-
-<body>
-    <div id="header" class="col-md-9">
-        <h1 class="text-center gradient-text">SCI Imagery Viewer</h1>
-    </div>   
-    <div id="map" class="col-md-9"></div>
-    
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
-    <script src="https://unpkg.com/leaflet.tilelayer.mbtiles@latest/Leaflet.TileLayer.MBTiles.js"></script>
-    <script src="data/SCI_Aerial_2016_ZM2-19_WebMerc.mbtiles"></script>
-    <script>
-    var mb = L.tileLayer.mbTiles('SCI_Aerial_2016_ZM2-19_WebMerc.mbtiles').addTo(map);
-        
-    </script>
-</body>
-
-</html>
