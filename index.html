@@ -1,3 +1,7 @@
+<!--Look into this as a way to export created features as GeoJSON
+https://bl.ocks.org/danswick/d30c44b081be31aea483
+-->
+
 <!DOCTYPE html>
         <html lang="en">
           <head>
@@ -29,12 +33,12 @@
               <script src="src/utm.js"></script>
               <script src="src/utmref.js"></script>
               <script src="src/Control.OSMGeocoder.js"></script>
-<!--
+
               <script src="src/leaflet.toolbar.js"></script>
               <script src="src/leaflet.toolbar-src.js"></script>
-             // <script src="src/leaflet.draw-src.js"></script>
-             // <script src="src/leaflet.draw-toolbar.js"></script>
--->
+              <script src="src/leaflet.draw-src.js"></script>
+            
+
               
 
     <script src="src/Toolbar.js"></script>
@@ -74,8 +78,13 @@
               <style>
                 body { margin:0; padding:0; }
                 body, table, tr, td, th, div, h1, h2, input { font-family: "Calibri", "Trebuchet MS", "Ubuntu", Serif; font-size: 11pt; }
-                #map { position:absolute; top:0; bottom:0; width:100%; } /* full size */
-                .ctl {
+/*                #map { position:absolute; top:0; bottom:0; width:100%; }  full size */
+                
+                  #map {
+                height: 675px;
+                background-color:darkblue;
+            }
+                  .ctl {
                     padding: 2px 10px 2px 10px;
                     background: white;
                     background: rgba(255,255,255,0.9);
@@ -90,21 +99,40 @@
                 .src {
                     font-size: 10pt;
                 }
+                   #footer {
+                height:125px;
+                background-color: black;
+                font: Calibri;
+                ;
+                font-size: 12pt;
+            }
 
             </style>
 
         </head>
         <body>
-            Latitude: <input type="text" name="lat" id="lat"/>
-            <br/>
-            Longitude: <input type="text" name="lng" id="lng"/>
-            <input type="button" onclick="zoomTo()" value="zoomTo"/>
-        <div id="map"></div>
+            
+           
+           
+           
+            
+            <div id="map" class="col-md-12"></div>
+             <div id="footer" class="col-md-12">
+                 Latitude: <input type="text" name="lat" id="lat"/>
+                 Longitude: <input type="text" name="lng" id="lng"/>
+            <input type="button" class="btn btn-success" onclick="zoomTo()" value="Zoom To"/>
+            <input type="button" class="btn btn-success" onclick="fullScreen()" value="Fullscreen"/>
 
+            <script type="text/javascript">map.addControl(new L.Control.Fullscreen());</script>
+            
+            
+            
+            </div>
+            
+            
         <script>
-        //mouse coordinates
+     
         
-         
         /* **** Leaflet **** */
 
         // Base layers
@@ -139,6 +167,7 @@
 
         var basemaps = {"OpenStreetMap": osm, "ESRI World Imagery":ESRI}
         var overlaymaps = {"SCI Imagery 2016": lyr}
+        var drawnItems = L.featureGroup().addTo(map);
 
         // Title
        /* var title = L.control();
@@ -187,11 +216,35 @@
             
             //Leaflet Draw and Control Toolbar:
             
-  
-  
+    map.addControl(new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems,
+            poly: {
+                allowIntersection: false
+            }
+        },
+        draw: {
+            polygon: {
+                allowIntersection: false,
+                showArea: true
+            }
+        }
+    }));
+
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+
+        drawnItems.addLayer(layer);
+    });
+        
             
-            //fullscreen control
-            //https://github.com/Leaflet/Leaflet.fullscreen -still need to implement
+        //fullscreen control
+        //this is the expirimental part - removing the control from the map div
+        function fullScreen(){
+         map.toggleFullscreen(); 
+        };
+        
+        //This is the one that actually works
         map.addControl(new L.Control.Fullscreen());
         </script>
 
